@@ -1,0 +1,40 @@
+.board {
+    display: flex;
+    flex-wrap: wrap; 
+    gap: 1rem;
+    padding: 1rem;
+    background: #121212;
+    min-height: 100vh;
+  }
+
+
+  .addColumn {
+    flex: 0 0 120px;
+    height: 100px;
+    background: #ffffff10;
+    border: 2px dashed #555;
+    color: #eee;
+    font-weight: bold;
+    border-radius: 8px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  @media (max-width: 768px) {
+  .board {
+    flex-direction: column;
+    padding: 0.5rem;
+  }
+
+  .column {
+    flex: 1 1 auto;
+    margin-bottom: 1rem;
+  }
+
+  .addColumn {
+    width: 100%;
+    height: 60px;
+  }
+}

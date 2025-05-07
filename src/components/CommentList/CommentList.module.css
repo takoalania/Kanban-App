@@ -1,0 +1,77 @@
+.commentList {
+    margin-top: 1.5rem;
+  }
+  
+  .heading {
+    margin-bottom: 0.75rem;
+    font-size: 1.2rem;
+    color: #eee;
+    border-bottom: 1px solid #444;
+    padding-bottom: 0.25rem;
+  }
+  
+  .comment {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    background: #2e2e2e;
+    padding: 0.5rem;
+    border-radius: 4px;
+    margin-bottom: 0.5rem;
+  }
+  
+  .text {
+    flex: 1;
+    color: #ddd;
+  }
+  
+  .link {
+    background: none;
+    border: none;
+    color: #6faeff;
+    cursor: pointer;
+    font-size: 0.9rem;
+  }
+  
+  .link:hover {
+    text-decoration: underline;
+  }
+  
+  .newRow {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-top: 0.75rem;
+  }
+  
+  .newLabel {
+    /* screen-reader only */
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip: rect(0 0 0 0);
+  }
+  
+  .newInput {
+    flex: 1;
+    padding: 0.5rem;
+    background: #1e1e1e;
+    border: 1px solid #444;
+    border-radius: 4px;
+    color: #f0f0f0;
+  }
+  
+  .addBtn {
+    padding: 0.5rem 1rem;
+    background: #2979ff;
+    border: none;
+    border-radius: 4px;
+    color: #fff;
+    cursor: pointer;
+  }
+  
+  .addBtn:hover {
+    background: #5393ff;
+  }
+  
