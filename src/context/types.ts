@@ -1,6 +1,7 @@
 export interface Comment {
     id: string;
     text: string;
+    children: Comment[];
 }
 
 export interface Task {

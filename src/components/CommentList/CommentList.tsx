@@ -11,6 +11,8 @@ interface Props {
 export default function CommentList({ taskId, comments }: Props) {
   const { dispatch } = useContext(BoardContext);
   const [newText, setNewText] = useState('');
+  const [replyingTo, setReplyingTo] = useState<string | null>(null);
+  const [replyText, setReplyText] = useState('');
 
   const handleAdd = () => {
     if (!newText.trim()) return;
@@ -18,17 +20,28 @@ export default function CommentList({ taskId, comments }: Props) {
       type: 'ADD_COMMENT',
       payload: {
         taskId,
-        comment: { id: `c-${Date.now()}`, text: newText.trim() },
+        comment: { id: `c-${Date.now()}`, text: newText.trim(), children: [] },
       },
     });
     setNewText('');
   };
 
   const handleEdit = (id: string) => {
-    const existing = comments.find((c: Comment) => c.id === id)?.text || '';
-    const text = prompt('Edit comment', existing);
-    if (text != null) {
-      dispatch({ type: 'EDIT_COMMENT', payload: { taskId, comment: { id, text } } });
+    const existingComment = comments.find(c => c.id === id);
+    const existingText = existingComment?.text ?? '';
+    const text = prompt('Edit comment', existingText);
+    if (existingComment && text != null) {
+      dispatch({
+        type: 'EDIT_COMMENT',
+        payload: {
+          taskId,
+          comment: {
+            id,
+            text,
+            children: existingComment.children
+          },
+        },
+      });
     }
   };
 
@@ -38,17 +51,58 @@ export default function CommentList({ taskId, comments }: Props) {
     }
   };
 
+  const handleReply = (parentId: string) => {
+    if (!replyText.trim()) return;
+    dispatch({
+      type: 'ADD_REPLY',
+      payload: {
+        taskId,
+        parentId,
+        comment: { id: `c-${Date.now()}`, text: replyText.trim(), children: [] },
+      },
+    });
+    setReplyText('');
+    setReplyingTo(null);
+  };
+
+  const renderComments = (list: Comment[], level = 0) =>
+    list.map(c => (
+      <div key={c.id} style={{ marginLeft: level * 16 }}>
+        <div className={styles.comment}>
+          <span className={styles.text}>{c.text}</span>
+          <button className={styles.link} onClick={() => handleEdit(c.id)}>Edit</button>
+          <button className={styles.link} onClick={() => handleDelete(c.id)}>Delete</button>
+          <button
+            className={styles.link}
+            onClick={() => setReplyingTo(replyingTo === c.id ? null : c.id)}
+          >
+            {replyingTo === c.id ? 'Cancel' : 'Reply'}
+          </button>
+        </div>
+
+        {replyingTo === c.id && (
+          <div className={styles.replyRow}>
+            <input
+              value={replyText}
+              onChange={e => setReplyText(e.target.value)}
+              placeholder="Reply..."
+              className={styles.replyInput}
+            />
+            <button className={styles.addBtn} onClick={() => handleReply(c.id)}>
+              Post
+            </button>
+          </div>
+        )}
+
+        {Array.isArray(c.children) && c.children.length > 0 && renderComments(c.children, level + 1)}
+      </div>
+  ));
+
   return (
     <div className={styles.commentList}>
       <h3 className={styles.heading}>Comments</h3>
 
-      {comments.map((c: Comment) => (
-        <div key={c?.id} className={styles.comment}>
-          <span className={styles.text}>{c?.text}</span>
-          <button className={styles.link} onClick={() => handleEdit(c.id)}>Edit</button>
-          <button className={styles.link} onClick={() => handleDelete(c.id)}>Delete</button>
-        </div>
-      ))}
+      {renderComments(comments)}
 
       <div className={styles.newRow}>
         <label htmlFor={`new-comment-${taskId}`} className={styles.newLabel}>

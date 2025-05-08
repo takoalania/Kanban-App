@@ -10,6 +10,7 @@ export type BoardAction =
     | {type: 'EDIT_TASK'; payload: { task: Task }}
     | {type: 'DELETE_TASK'; payload: { columnId: string; taskId: string }}
     | {type: 'ADD_COMMENT'; payload: { taskId: string; comment: Comment }}
+    | {type: 'ADD_REPLY'; payload: { taskId: string; parentId: string; comment: Comment } }
     | {type: 'EDIT_COMMENT'; payload: { taskId: string; comment: Comment }}
     | {type: 'DELETE_COMMENT'; payload: { taskId: string; commentId: string }}
     | {type: 'MOVE_TASK'; payload: {
@@ -97,17 +98,42 @@ export function boardReducer(state: BoardData, action: BoardAction): BoardData {
             };
         }
 
+        case 'ADD_REPLY': {
+            const { taskId, parentId, comment } = action.payload;
+            const task = state.tasks[taskId];
+            const commentsList: Comment[] = task.comments || [];
+          
+            const insertReply = (list: Comment[]): Comment[] =>
+              list.map(c =>
+                c.id === parentId
+                  ? { ...c, children: [...(c.children || []), comment] }
+                  : { ...c, children: insertReply(c.children || []) }
+              );
+          
+            return {
+              ...state,
+              tasks: {
+                ...state.tasks,
+                [taskId]: { ...task, comments: insertReply(commentsList) },
+              },
+            };
+        }
+          
+
         case 'EDIT_COMMENT': {
             const { taskId, comment } = action.payload;
             const task = state.tasks[taskId];
-            const updatedComments = task.comments.map((c: Comment) => {
-                return c.id === comment.id ? comment: c
-            });
-            const updatedTask = { ...task, comments: updatedComments };
-            
+            const updatedComments = task.comments.map(c =>
+              c.id === comment.id 
+                ? { ...c, text: comment.text, children: c.children ?? [] } 
+                : c
+            );
             return {
-                ...state, 
-                tasks: { ...state.tasks, [taskId]: updatedTask },
+              ...state,
+              tasks: {
+                ...state.tasks,
+                [taskId]: { ...task, comments: updatedComments },
+              },
             };
         }
 

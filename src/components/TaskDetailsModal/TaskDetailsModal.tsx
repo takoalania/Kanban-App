@@ -45,13 +45,13 @@ export default function TaskDetailsModal({ task, onClose }: Props) {
                     onChange={(e: React.ChangeEvent<HTMLInputElement>) => setDescription(e.target.value)}/>
             </label>
 
-            <CommentList taskId={task.id} comments={task.comments} />
+            <CommentList taskId={task.id} comments={task.comments ?? []} />
 
-            <div className={styles.buttonRow}>
-                <button onClick={handeSave}>
+            <div className={styles.buttons}>
+                <button className={styles.primary} onClick={handeSave}>
                     Save
                 </button>
-                <button onClick={onClose}>
+                <button className={styles.secondary} onClick={onClose}>
                     Cancel
                 </button>
             </div> 
