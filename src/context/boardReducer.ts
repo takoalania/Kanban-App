@@ -1,7 +1,5 @@
 import { BoardData, Column, Task, Comment  } from './types';
 
-// Every action Kanban board should do
-
 export type BoardAction = 
     | {type: 'ADD_COLUMN'; payload: { title: string }}
     | {type: 'RENAME_COLUMN'; payload: { columnId: string; title: string }}
@@ -154,7 +152,6 @@ export function boardReducer(state: BoardData, action: BoardAction): BoardData {
         case 'MOVE_TASK': {
             const { srcColumnId, destColumnId, srcIndex, destIndex, taskId } = action.payload;
 
-            // remove from source
             let columns = state.columns.map((col: Column) => {
                 if (col.id === srcColumnId) {
                     const ids = [...col.taskIds];
@@ -165,7 +162,6 @@ export function boardReducer(state: BoardData, action: BoardAction): BoardData {
                 return col;
             });
 
-            // insert into destination
             columns = columns.map((col: Column) => {
                 if (col.id === destColumnId) {
                     const ids = [...col.taskIds];
